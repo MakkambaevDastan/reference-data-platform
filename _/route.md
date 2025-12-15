@@ -34,6 +34,13 @@ Global Template Controller
     PUT     /{code}                                Обновить шаблон `{ "type": "object",  "properties": {...}, "required":[...]}`
     DELETE  /{code}                                Удалить шаблон
 
+Public Lookup Controller
+/api/v1/lookup
+    GET     /{code}                       Получить весь справочник
+    GET     /{code}/{key}                 Получить конкретное значение
+    POST    /batch                        Пакетный запрос `[{ "code": "COUNTRY" }, { "code": "CURRENCY", "keys": ["USD", "EUR"] }]`
+
+
 Global Template
 ```json
 {
@@ -240,13 +247,6 @@ Global Template
   ]
 }
 ```
-
-Public Lookup Controller
-/api/v1/lookup
-GET     /{code}                       Получить весь справочник
-GET     /{code}/{key}                 Получить конкретное значение
-POST    /batch                        Пакетный запрос `[{ "code": "COUNTRY" }, { "code": "CURRENCY", "keys": ["USD", "EUR"] }]`
-
 
 
 
