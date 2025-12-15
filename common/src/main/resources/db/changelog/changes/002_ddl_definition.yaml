@@ -84,17 +84,13 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_def_deleted_by
 
-        - addCheckConstraint:
-            tableName: definition
-            constraintName: chk_def_status
-            condition: "status IN ('DRAFT','ACTIVE','ARCHIVED')"
-
-        - addCheckConstraint:
-            tableName: definition
-            constraintName: chk_def_ver_pos
-            condition: "version > 0"
-
-        - addCheckConstraint:
-            tableName: definition
-            constraintName: chk_def_del_consistency
-            condition: "(deleted_at IS NULL AND deleted_by IS NULL) OR (deleted_at IS NOT NULL AND deleted_by IS NOT NULL)"
+        - sql:
+            sql: >
+              ALTER TABLE definition ADD CONSTRAINT chk_def_status 
+              CHECK (status IN ('DRAFT','ACTIVE','ARCHIVED'));
+              
+              ALTER TABLE definition ADD CONSTRAINT chk_def_ver_pos 
+              CHECK (version > 0);
+              
+              ALTER TABLE definition ADD CONSTRAINT chk_def_del_consistency 
+              CHECK ((deleted_at IS NULL AND deleted_by IS NULL) OR (deleted_at IS NOT NULL AND deleted_by IS NOT NULL));

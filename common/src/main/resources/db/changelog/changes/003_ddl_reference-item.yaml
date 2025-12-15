@@ -96,17 +96,13 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_ref_deleted_by
 
-        - addCheckConstraint:
-            tableName: reference_item
-            constraintName: chk_ref_status
-            condition: "status IN ('DRAFT','ACTIVE','ARCHIVED')"
+        - sql:
+            sql: >
+              ALTER TABLE reference_item ADD CONSTRAINT chk_ref_status 
+              CHECK (status IN ('DRAFT','ACTIVE','ARCHIVED'));
 
-        - addCheckConstraint:
-            tableName: reference_item
-            constraintName: chk_ref_ver_pos
-            condition: "version > 0"
+              ALTER TABLE reference_item ADD CONSTRAINT chk_ref_ver_pos 
+              CHECK (version > 0);
 
-        - addCheckConstraint:
-            tableName: reference_item
-            constraintName: chk_ref_del_consist
-            condition: "(deleted_at IS NULL AND deleted_by IS NULL) OR (deleted_at IS NOT NULL AND deleted_by IS NOT NULL)"
+              ALTER TABLE reference_item ADD CONSTRAINT chk_ref_del_consist 
+              CHECK ((deleted_at IS NULL AND deleted_by IS NULL) OR (deleted_at IS NOT NULL AND deleted_by IS NOT NULL));
