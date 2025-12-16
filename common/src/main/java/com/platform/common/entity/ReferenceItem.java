@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,4 +68,21 @@ public class ReferenceItem extends BaseIdentityEntity {
     @CollectionTable(name = "reference_item_translate", joinColumns = @JoinColumn(name = "item_id"))
     @Builder.Default
     private List<Translate> translates = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private ReferenceItem parent;
+
+    @Column(name = "valid_from")
+    private Instant validFrom;
+
+    @Column(name = "valid_to")
+    private Instant validTo;
+
+    public boolean isValidOn(Instant date) {
+        if (date == null) date = Instant.now();
+        boolean startOk = (validFrom == null) || !date.isBefore(validFrom);
+        boolean endOk = (validTo == null) || !date.isAfter(validTo);
+        return startOk && endOk && status == Status.ACTIVE;
+    }
 }
