@@ -28,6 +28,8 @@
         <hypersistence.version>3.14.0</hypersistence.version> <!-- Dec 16, 2025 -->
         <json.validator.version>2.0.0</json.validator.version> <!-- Oct 25, 2025 -->
         <jupiter.version>6.0.1</jupiter.version> <!-- Oct 31, 2025 -->
+
+        <depclean-maven-plugin.version>2.1.0</depclean-maven-plugin.version> <!-- Jun 06, 2025 -->
     </properties>
 
     <dependencyManagement>
@@ -68,6 +70,19 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>se.kth.castor</groupId>
+                <artifactId>depclean-maven-plugin</artifactId>
+                <version>${depclean-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>depclean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
