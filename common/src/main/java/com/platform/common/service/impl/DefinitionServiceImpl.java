@@ -8,11 +8,16 @@ import com.platform.common.model.definition.DefinitionResponse;
 import com.platform.common.model.definition.PagedDefinitionResponse;
 import com.platform.common.repository.DefinitionRepository;
 import com.platform.common.service.DefinitionService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
@@ -47,14 +52,14 @@ public class DefinitionServiceImpl implements DefinitionService {
     @Transactional(readOnly = true)
     public DefinitionResponse getByCode(String code) {
         Definition def = repository.findCurrentByCode(code)
-                .orElseThrow(() -> new RuntimeException("Definition not found: " + code));
+                .orElseThrow(() -> new EntityNotFoundException("Definition not found: " + code));
         return mapper.toResponse(def);
     }
 
     @Override
     public DefinitionResponse create(DefinitionCreateRequest request) {
         if (repository.existsByCode(request.getCode())) {
-            throw new RuntimeException("Definition already exists: " + request.getCode());
+            throw new EntityExistsException("Definition already exists: " + request.getCode());
         }
 
         Definition def = Definition.builder()
@@ -100,7 +105,7 @@ public class DefinitionServiceImpl implements DefinitionService {
         });
 
         Definition target = repository.findById(new Definition.Id(code, version))
-                .orElseThrow(() -> new RuntimeException("Version not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Version not found " + code + " " + version));
 
         target.setStatus(Status.ACTIVE);
         target.setCurrent(true);

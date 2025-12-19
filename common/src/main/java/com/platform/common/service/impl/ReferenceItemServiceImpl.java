@@ -3,7 +3,6 @@ package com.platform.common.service.impl;
 import com.platform.common.entity.Definition;
 import com.platform.common.entity.ReferenceItem;
 import com.platform.common.enums.Status;
-import com.platform.common.exception.NotFoundException;
 import com.platform.common.exception.ValidationException;
 import com.platform.common.mapper.ReferenceItemMapper;
 import com.platform.common.model.definition.PagedDefinitionResponse;
@@ -11,19 +10,21 @@ import com.platform.common.model.definition.RelationRule;
 import com.platform.common.model.item.BatchResponse;
 import com.platform.common.model.item.ItemUpsertRequest;
 import com.platform.common.model.reference.ReferenceItemResponse;
-import com.platform.common.model.reference.ReferenceUpsertRequest;
 import com.platform.common.repository.DefinitionRepository;
 import com.platform.common.repository.ReferenceItemRepository;
 import com.platform.common.service.JsonValidationService;
 import com.platform.common.service.ReferenceItemService;
 import com.platform.common.util.JsonHelper;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.jpa.domain.Specification;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 
@@ -111,7 +112,7 @@ public class ReferenceItemServiceImpl implements ReferenceItemService {
     @Transactional(readOnly = true)
     public ReferenceItemResponse findByKey(String code, String key) {
         ReferenceItem item = repository.findByCodeAndKey(code, key)
-                .orElseThrow(() -> new NotFoundException("Item not found: " + key));
+                .orElseThrow(() -> new EntityNotFoundException("Item not found: " + key));
         return mapper.toResponse(item);
     }
 
@@ -119,7 +120,7 @@ public class ReferenceItemServiceImpl implements ReferenceItemService {
     public ReferenceItemResponse upsert(String code, String key, ItemUpsertRequest request) {
         // 1. Получаем определение (схему)
         Definition definition = definitionRepository.findCurrentByCode(code)
-                .orElseThrow(() -> new NotFoundException("Definition not found: " + code));
+                .orElseThrow(() -> new EntityNotFoundException("Definition not found: " + code));
 
         // 2. Подготовка сущности
         ReferenceItem item = repository.findByCodeAndKey(code, key)
@@ -172,7 +173,7 @@ public class ReferenceItemServiceImpl implements ReferenceItemService {
     @Override
     public void delete(String code, String key) {
         ReferenceItem item = repository.findByCodeAndKey(code, key)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Item not found: " + key));
         item.setStatus(Status.ARCHIVED);
         repository.save(item);
     }
@@ -180,7 +181,7 @@ public class ReferenceItemServiceImpl implements ReferenceItemService {
     @Override
     public ReferenceItemResponse approve(String code, String key) {
         ReferenceItem item = repository.findByCodeAndKey(code, key)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Item not found: " + key));
         item.setStatus(Status.ACTIVE);
         return mapper.toResponse(repository.save(item));
     }
@@ -236,7 +237,7 @@ public class ReferenceItemServiceImpl implements ReferenceItemService {
     private void resolveParent(ReferenceItem item, String parentKey) {
         if (parentKey != null && !parentKey.isBlank()) {
             ReferenceItem parent = repository.findByCodeAndKey(item.getCode(), parentKey)
-                    .orElseThrow(() -> new NotFoundException("Parent not found: " + parentKey));
+                    .orElseThrow(() -> new EntityNotFoundException("Parent not found: " + parentKey));
 
             if (item.getId() != null && item.getId().equals(parent.getId())) {
                 throw new ValidationException("Item cannot be its own parent");
@@ -250,6 +251,7 @@ public class ReferenceItemServiceImpl implements ReferenceItemService {
     /**
      * Вычисляет и обновляет Materialized Path.
      * Формат: /root_id/parent_id/my_id/
+     *
      * @return true, если путь изменился
      */
     private boolean updateTreePath(ReferenceItem item) {

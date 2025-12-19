@@ -15,6 +15,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +37,7 @@ public class LookupServiceImpl implements LookupService {
     @Cacheable(value = "dictionaries", key = "#code + '-' + #lang + '-' + #date", unless = "#result == null")
     public DictionaryLookupResponse getDictionary(String code, String lang, Instant date) {
         Definition definition = definitionRepository.findCurrentByCode(code)
-                .orElseThrow(() -> new RuntimeException("Dictionary not found: " + code));
+                .orElseThrow(() -> new EntityNotFoundException("Dictionary not found: " + code));
 
         Instant actualDate = (date != null) ? date : Instant.now();
         List<ReferenceItem> items = itemRepository.findActiveItems(code, actualDate);
@@ -45,7 +47,7 @@ public class LookupServiceImpl implements LookupService {
                 .i18n(mapTranslations(definition.getTranslations(), lang))
                 .content(items.stream()
                         .map(item -> mapper.toLookupResponse(item, lang))
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 
@@ -55,7 +57,7 @@ public class LookupServiceImpl implements LookupService {
 
         ReferenceItem item = itemRepository.findByCodeAndKey(code, key)
                 .filter(i -> i.isValidOn(actualDate))
-                .orElseThrow(() -> new RuntimeException("Item not found or inactive: " + key));
+                .orElseThrow(() -> new EntityNotFoundException("Item not found or inactive: " + key));
 
         return mapper.toLookupResponse(item, null);
     }
