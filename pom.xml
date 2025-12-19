@@ -25,6 +25,8 @@
         <project.version>0.0.1</project.version>
         <java.version>25</java.version>
 
+        <springdoc.version>3.0.0</springdoc.version> <!-- Nov 21, 2025 -->
+
         <hypersistence.version>3.14.0</hypersistence.version> <!-- Dec 16, 2025 -->
         <json.validator.version>2.0.0</json.validator.version> <!-- Oct 25, 2025 -->
         <jupiter.version>6.0.1</jupiter.version> <!-- Oct 31, 2025 -->
@@ -34,6 +36,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.hypersistence</groupId>
                 <artifactId>hypersistence-utils-hibernate-71</artifactId>

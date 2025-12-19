@@ -20,3 +20,8 @@ spring:
     user:
       name: das
       password: das
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+  api-docs:
+    path: /docs
