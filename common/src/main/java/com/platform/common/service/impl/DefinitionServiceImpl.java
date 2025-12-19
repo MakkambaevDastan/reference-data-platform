@@ -65,7 +65,7 @@ public class DefinitionServiceImpl implements DefinitionService {
         Definition def = Definition.builder()
                 .id(new Definition.Id(request.getCode(), 1))
                 .status(Status.DRAFT)
-                .isCurrent(true)
+                .current(true)
                 .schemaLob(mapper.toJson(request.getSchema()))
                 .translations(mapper.toEntityTranslations(request.getTranslations()))
                 .build();
@@ -88,7 +88,7 @@ public class DefinitionServiceImpl implements DefinitionService {
         Definition def = Definition.builder()
                 .id(new Definition.Id(code, maxVersion + 1))
                 .status(Status.DRAFT)
-                .isCurrent(false)
+                .current(false)
                 .schemaLob(mapper.toJson(request.getSchema()))
                 .translations(mapper.toEntityTranslations(request.getTranslations()))
                 .build();

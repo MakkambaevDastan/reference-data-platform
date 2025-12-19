@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LookupBatchRequest {
+
     private List<SingleRequest> requests;
 
     @Data
@@ -19,7 +20,9 @@ public class LookupBatchRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SingleRequest {
+
         private String code;
+
         private List<String> keys;
     }
 }

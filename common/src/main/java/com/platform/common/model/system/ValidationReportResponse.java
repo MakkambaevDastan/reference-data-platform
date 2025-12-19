@@ -18,8 +18,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValidationReportResponse {
 
-    @JsonProperty("dictionary_code")
-    private String dictionaryCode;
+    private String code;
 
     @Builder.Default
     private Instant timestamp = Instant.now();

@@ -19,7 +19,7 @@ public interface DefinitionRepository extends JpaRepository<Definition, Definiti
     // Обычно ищем только среди актуальных (isCurrent = true)
     @Query("SELECT DISTINCT d FROM Definition d " +
             "LEFT JOIN d.translations t " +
-            "WHERE d.isCurrent = true " +
+            "WHERE d.current = true " +
             "AND (" +
             "   LOWER(d.id.code) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "   OR LOWER(t.value) LIKE LOWER(CONCAT('%', :search, '%'))" +
@@ -27,7 +27,7 @@ public interface DefinitionRepository extends JpaRepository<Definition, Definiti
     Page<Definition> searchByCodeOrName(@Param("search") String search, Pageable pageable);
 
     // 2. Получить текущую активную версию справочника
-    @Query("SELECT d FROM Definition d WHERE d.id.code = :code AND d.isCurrent = true")
+    @Query("SELECT d FROM Definition d WHERE d.id.code = :code AND d.current = true")
     Optional<Definition> findCurrentByCode(@Param("code") String code);
 
     // 3. Проверка существования (хотя бы одной версии с таким кодом)

@@ -25,7 +25,12 @@ public class ItemUpsertRequest {
 
     private List<TranslationDto> translations;
 
+    @JsonProperty("parent_key")
     private String parentKey;
+
+    @JsonProperty("valid_from")
     private Instant validFrom;
+
+    @JsonProperty("valid_to")
     private Instant validTo;
 }

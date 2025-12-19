@@ -51,7 +51,7 @@ public class SystemServiceImpl implements SystemService {
         // Если схемы нет, то валидировать нечего (или считаем всё валидным)
         if (schemaLob == null) {
             return ValidationReportResponse.builder()
-                    .dictionaryCode(code)
+                    .code(code)
                     .totalItems(0) // Или реальное кол-во
                     .build();
         }
@@ -78,7 +78,7 @@ public class SystemServiceImpl implements SystemService {
         }
 
         return ValidationReportResponse.builder()
-                .dictionaryCode(code)
+                .code(code)
                 .totalItems(items.size())
                 .invalidItems(errors.size())
                 .validItems(items.size() - errors.size())

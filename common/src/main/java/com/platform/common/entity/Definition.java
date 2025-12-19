@@ -47,7 +47,7 @@ public class Definition extends BaseAudit {
 
     @Builder.Default
     @Column(name = "is_current", nullable = false)
-    private boolean isCurrent = false;
+    private boolean current = false;
 
     @Lob
     @Column(name = "schema_lob", nullable = false)

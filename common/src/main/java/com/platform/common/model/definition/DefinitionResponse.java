@@ -30,7 +30,7 @@ public class DefinitionResponse extends AuditableDto {
 
     @JsonView(Views.Internal.class)
     @JsonProperty("is_current")
-    private boolean isCurrent;
+    private boolean current;
 
     @JsonView(Views.Public.class)
     private Map<String, Object> schema;

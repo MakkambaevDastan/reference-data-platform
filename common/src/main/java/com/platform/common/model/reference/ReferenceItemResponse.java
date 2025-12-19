@@ -7,6 +7,7 @@ import com.platform.common.model.base.AuditableDto;
 import com.platform.common.model.common.TranslationDto;
 import com.platform.common.model.definition.DefinitionResponse;
 import com.platform.common.model.view.Views;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class ReferenceItemResponse extends AuditableDto {
 
     @JsonView(Views.Public.class)
     @JsonProperty("is_valid")
-    private boolean isValid;
+    private boolean valid;
 
     @JsonView(Views.Public.class)
     @JsonProperty("common_content")
@@ -47,9 +48,15 @@ public class ReferenceItemResponse extends AuditableDto {
     @JsonView(Views.Internal.class)
     private DefinitionResponse definition;
 
+    @JsonProperty("parent_key")
     private String parentKey;
+
+    @JsonProperty("valid_from")
     private Instant validFrom;
+
+    @JsonProperty("valid_to")
     private Instant validTo;
 
+    @JsonProperty("validation_warnings")
     private List<String> validationWarnings;
 }

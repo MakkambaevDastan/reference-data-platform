@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.common.entity.Definition;
 import com.platform.common.entity.base.Translation;
 import com.platform.common.model.common.TranslationDto;
-import com.platform.common.model.definition.DefinitionCreateRequest;
 import com.platform.common.model.definition.DefinitionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ public class DefinitionMapper {
     public DefinitionResponse toResponse(Definition entity) {
         return DefinitionResponse.builder()
                 .code(entity.getId().code())
-                .isCurrent(entity.isCurrent())
+                .current(entity.isCurrent())
                 .schema(parseJson(entity.getSchemaLob()))
                 .translations(toDtos(entity.getTranslations()))
                 .createdBy(entity.getCreatedBy())

@@ -29,7 +29,7 @@ public class BaseDefinition extends AbstractBaseDto {
 
     @JsonView(Views.Internal.class)
     @JsonProperty("is_current")
-    private boolean isCurrent;
+    private boolean current;
 
     @JsonView(Views.Summary.class)
     private List<TranslationDto> translations;
