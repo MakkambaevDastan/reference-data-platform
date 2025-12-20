@@ -1,4 +1,4 @@
-package com.platform.server.controller;
+package com.platform.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.platform.common.enums.Status;

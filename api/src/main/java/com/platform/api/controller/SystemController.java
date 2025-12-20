@@ -1,4 +1,4 @@
-package com.platform.server.controller;
+package com.platform.api.controller;
 
 import com.platform.common.model.system.ValidationReportResponse;
 import com.platform.common.service.SystemService;

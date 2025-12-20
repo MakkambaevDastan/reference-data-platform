@@ -16,8 +16,9 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api</module>
         <module>common</module>
-        <module>server</module>
+        <module>frontend</module>
         <module>starter</module>
     </modules>
 
@@ -32,6 +33,13 @@
         <jupiter.version>6.0.1</jupiter.version> <!-- Oct 31, 2025 -->
 
         <depclean-maven-plugin.version>2.1.0</depclean-maven-plugin.version> <!-- Jun 06, 2025 -->
+
+        <node.version>24.12.0</node.version> <!-- Dec 10, 2025 -->
+        <npm.version>11.6.2</npm.version> <!-- Oct 08, 2025 -->
+
+        <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version> <!-- May 31, 2025 -->
+        <frontend-maven-plugin.verion>1.15.4</frontend-maven-plugin.verion> <!-- Sep 26, 2025 -->
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version> <!-- Mar 24, 2023 -->
     </properties>
 
     <dependencyManagement>
@@ -91,6 +99,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.verion}</version>
             </plugin>
         </plugins>
     </build>

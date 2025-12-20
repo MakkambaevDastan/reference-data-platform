@@ -1,4 +1,4 @@
-package com.platform.server;
+package com.platform.api;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.networknt.schema.Error;
