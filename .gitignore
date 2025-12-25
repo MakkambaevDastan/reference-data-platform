@@ -32,3 +32,6 @@ node_modules
 frontend/node
 frontend/admin/node_modules
 /api/src/main/resources/static/admin/
+
+/frontend/admin/src/routeTree.gen.ts
+/frontend/admin/.env.local

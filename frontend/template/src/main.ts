@@ -13,7 +13,7 @@ import '@/assets/tailwind.css';
 
 import Errors from '@/components/Errors.vue';
 import { http } from '@/http';
-import { i18n } from '@/i18n';
+import { i18n } from '@/index';
 import { pinia } from './stores';
 
 const app = createApp(App);
