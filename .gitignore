@@ -35,3 +35,5 @@ frontend/admin/node_modules
 
 /frontend/admin/src/routeTree.gen.ts
 /frontend/admin/.env.local
+
+/project.md
