@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class ProjectDumpUtil {
@@ -34,6 +34,7 @@ public class ProjectDumpUtil {
     private final Set<String> excludedDirs;
     private final Set<String> excludedFilenames;
     private final List<PathMatcher> excludedFilePatterns;
+    private final List<Pattern> excludedContentPatterns;
     private final Map<String, String> extensions;
 
     private ProjectDumpUtil(Builder builder) {
@@ -45,9 +46,13 @@ public class ProjectDumpUtil {
         excludedFilenames = builder.excludedFilenames;
         extensions = builder.extensions;
 
-        this.excludedFilePatterns = builder.excludedPatterns.stream()
+        excludedFilePatterns = builder.excludedPatterns.stream()
                 .map(pattern -> FileSystems.getDefault().getPathMatcher("glob:" + pattern))
-                .collect(Collectors.toList());
+                .toList();
+
+        excludedContentPatterns = builder.excludedContent.stream()
+                .map(Pattern::compile)
+                .toList();
     }
 
     public static void main(String[] args) {
@@ -60,6 +65,11 @@ public class ProjectDumpUtil {
                     .addExcludedFilename("Config.java")
                     .addExcludedPattern("*Test.java")
                     .addExcludedPattern("*.log")
+                    .addExcludedContent("^package .*")
+                    .addExcludedContent("^import .*")
+                    .addExcludedContent(".*LOGGER.*")
+                    .addExcludedContent(".*// TODO.*")
+                    .addExcludedContent("^\\s*$")
                     .build()
                     .dump();
         } catch (IOException e) {
@@ -72,7 +82,7 @@ public class ProjectDumpUtil {
     }
 
     public int dump() throws IOException {
-        Path projectRoot = resolveProjectRoot(this.rootPath);
+        Path projectRoot = resolveProjectRoot(rootPath);
 
         String targetPathStr = targetPackage.replace(".", File.separator);
         List<Path> foundFiles = new ArrayList<>();
@@ -109,7 +119,7 @@ public class ProjectDumpUtil {
         Collections.sort(foundFiles);
 
         if (foundFiles.isEmpty()) {
-            System.out.println("⚠️ Files not found in package: " + targetPackage);
+            System.out.println("⚠️ Files not found");
             return 0;
         }
 
@@ -126,7 +136,16 @@ public class ProjectDumpUtil {
         if (excludedFilenames.contains(fileName)) return true;
 
         for (PathMatcher matcher : excludedFilePatterns) {
-            if (matcher.matches(file.getFileName())) {
+            if (matcher.matches(file.getFileName())) return true;
+        }
+        return false;
+    }
+
+    private boolean shouldExcludeLine(String line) {
+        if (excludedContentPatterns.isEmpty()) return false;
+
+        for (Pattern pattern : excludedContentPatterns) {
+            if (pattern.matcher(line).find()) {
                 return true;
             }
         }
@@ -168,14 +187,15 @@ public class ProjectDumpUtil {
         writer.write("```" + lang + "\n");
 
         try (Stream<String> lines = Files.lines(file, StandardCharsets.UTF_8)) {
-            lines.forEach(line -> {
-                try {
-                    writer.write(line);
-                    writer.newLine();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
+            lines.filter(line -> !shouldExcludeLine(line))
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
         } catch (UncheckedIOException | IOException e) {
             writer.write("// Error reading file: " + e.getMessage() + "\n");
         }
@@ -217,6 +237,7 @@ public class ProjectDumpUtil {
         ));
         private final Set<String> excludedFilenames = new HashSet<>();
         private final Set<String> excludedPatterns = new HashSet<>();
+        private final Set<String> excludedContent = new HashSet<>();
 
         private final Map<String, String> extensions = new HashMap<>(Map.ofEntries(
                 Map.entry(".java", "java"),
@@ -267,6 +288,11 @@ public class ProjectDumpUtil {
 
         public Builder addExcludedPattern(String pattern) {
             excludedPatterns.add(pattern);
+            return this;
+        }
+
+        public Builder addExcludedContent(String regex) {
+            excludedContent.add(regex);
             return this;
         }
 
